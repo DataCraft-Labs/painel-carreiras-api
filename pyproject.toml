@@ -2,7 +2,7 @@
 name = "painel-carreiras-api"
 version = "0.1.0"
 description = "API for Painel de Carreiras"
-authors = ["Igor Magalhaes <igor.magalhaes.r@gmail.com>", Amanda Pavanelli]
+authors = ["Igor Magalhaes <igor.magalhaes.r@gmail.com>", "Amanda Pavanelli", "Karen Jardim Belo"]
 license = "All rights reserverd"
 readme = "README.md"
 packages = [{ include = "src" }]
