@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Painel de Carreiras{% endblock %}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://unpkg.com/htmx.org"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+    {% block additional_css %}{% endblock %}
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f3f0f7;
+            color: #333;
+            line-height: 1.6;
+        }
+        header {
+            background-color: #6a4f9e;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+        }
+        header img {
+            margin-right: 20px;
+            height: 50px;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+        .nav-link, .login-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            margin-left: 20px;
+        }
+        .login-link {
+            background-color: #7a5c99;
+            border-radius: 4px;
+        }
+        .nav-link:hover, .login-link:hover {
+            text-decoration: underline;
+            background-color: #9c77cc;
+        }
+        main {
+            width: 85%;
+            max-width: 1200px;
+            margin: 30px auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 15px rgba(106, 79, 158, 0.2);
+            border-radius: 8px;
+        }
+        footer .bottom-bar {
+            text-align: center;
+            padding: 20px;
+            background-color: #6a4f9e;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid #e6d8f3;
+        }
+        th {
+            background-color: #9c77cc;
+            color: white;
+        }
+        a {
+            color: #6a4f9e;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            color: #6a4f9e;
+            float: none;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+            border: 1px solid #ddd;
+            margin: 0 4px;
+        }
+        .pagination a.active {
+            background-color: #9c77cc;
+            color: white;
+            border: 1px solid #9c77cc;
+        }
+        .pagination a:hover:not(.active) {background-color: #ddd;}
+        .pagination-controls {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px 0;
+        }
+        .pagination-controls form {
+            display: inline-block;
+            margin: 0;
+        }
+        .pagination-controls button, .pagination-controls select {
+            padding: 8px 15px;
+            margin: 0 5px;
+            background-color: #9c77cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .pagination-controls button:hover, .pagination-controls select:hover {
+            background-color: #7a5c99;
+        }
+        .pagination-controls button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .pagination-controls select {
+            cursor: pointer;
+        }
+        span.current-page {
+            padding: 8px;
+            margin: 0 5px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="/"><img src="https://raw.githubusercontent.com/DataCraft-Labs/static/main/datacraft_labs.png" alt="Company Logo"></a>
+            <h1>{% block header %}Painel de Carreiras{% endblock %}</h1>
+        </div>
+        <div class="nav-links">
+            <a href="/postings" class="nav-link">Postings</a>
+            <a href="/positions" class="nav-link">Positions</a>
+            <a href="/login" class="login-link">Login</a>
+        </div>
+    </header>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    <footer>
+        <div class="bottom-bar">
+            <p>© 2024 DataCraft Labs. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
