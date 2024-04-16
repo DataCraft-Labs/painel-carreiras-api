@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block additional_css %}
+<style>
+    .search-and-filters-container, .visualization-container {
+        max-width: 960px;
+        margin: 2rem auto;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .visualization-container {
+        background: #ffffff; /* Ensures visual consistency */
+        text-align: center; /* Centers the text horizontally */
+    }
+    .no-data {
+        margin: 0; /* Removes any default margin */
+        padding: 20px;
+        color: #666; /* Optional: styles the color of the text */
+    }
+    .filter-group {
+        display: flex;
+        margin-bottom: 1rem;
+    }
+    .filter-select {
+        flex: 1;
+        padding: 10px;
+        margin-right: 10px;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+    }
+    .button {
+        padding: 10px 20px;
+        background-color: #4a47a3;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .button:hover {
+        background-color: #6862a5;
+    }
+</style>
+{% endblock %}
+
+{% block title %}Search Salaries{% endblock %}
+
+{% block content %}
+<div class="search-and-filters-container">
+    <div class="filter-group">
+        <select class="filter-select" name="position" id="position-select" hx-get="/dropdown_data" hx-target="#position-select" hx-swap="innerHTML" hx-trigger="load">
+            <option value="">Select a position...</option>
+        </select>
+        <select class="filter-select" name="location" id="location-select" hx-get="/dropdown_data" hx-target="#location-select" hx-swap="innerHTML" hx-trigger="load">
+            <option value="">Select a location...</option>
+        </select>
+        <select class="filter-select" name="company" id="company-select" hx-get="/dropdown_data" hx-target="#company-select" hx-swap="innerHTML" hx-trigger="load">
+            <option value="">Select a company...</option>
+        </select>
+        <button class="button">Search</button>
+    </div>
+</div>
+<div class="visualization-container">
+    <!-- This is where the charts will go -->
+    <p class="no-data">No data loaded yet.</p>
+</div>
+{% endblock %}
