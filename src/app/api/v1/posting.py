@@ -13,8 +13,8 @@ router = crud_router(
     update_schema=PostingUpdate,
     path="/posting",
     tags=["Posting"],
-    # create_deps=[Depends(get_current_superuser)],
-    # update_deps=[Depends(get_current_superuser)],
-    # delete_deps=[Depends(get_current_superuser)],
-    # db_delete_deps=[Depends(get_current_superuser)],
+    create_deps=[Depends(get_current_superuser)],
+    update_deps=[Depends(get_current_superuser)],
+    delete_deps=[Depends(get_current_superuser)],
+    db_delete_deps=[Depends(get_current_superuser)],
 )
