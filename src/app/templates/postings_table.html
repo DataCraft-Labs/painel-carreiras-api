@@ -2,9 +2,10 @@
     <thead>
         <tr>
             <th>ID</th>
-            <th>Position Title</th>
-            <th>Location</th>
+            <th>Title</th>
             <th>Company</th>
+            <th>Location</th>
+            <th>Description</th>
             <th>Seniority</th>
         </tr>
     </thead>
@@ -12,9 +13,10 @@
         {% for posting in postings %}
         <tr>
             <td>{{ posting.id }}</td>
-            <td>{{ posting.position_title }}</td>
-            <td>{{ posting.location }}</td>
+            <td>{{ posting.original_title }}</td>
             <td>{{ posting.company }}</td>
+            <td>{{ posting.location }}</td>
+            <td>{{ posting.description }}</td>
             <td>{{ posting.seniority }}</td>
         </tr>
         {% endfor %}

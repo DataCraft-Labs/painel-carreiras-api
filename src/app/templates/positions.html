@@ -1,10 +1,59 @@
 {% extends "base.html" %}
 
+{% block additional_css %}
+<style>
+    #search-input {
+        width: 96%; /* slightly different width to make it distinct */
+        padding: 12px 20px; /* larger padding for a bigger input field */
+        font-size: 16px; /* larger font size for better readability */
+        border: 3px solid #6a4f9e; /* thicker and colored border */
+        border-radius: 6px; /* rounded corners */
+        transition: all 0.3s ease-out; /* smooth transition on focus */
+    }
+
+    #search-input:focus {
+        border-color: #9c77cc; /* change border color on focus */
+        box-shadow: 0 0 8px #9c77cc; /* subtle shadow for emphasis */
+    }
+
+    .search-form {
+        display: flex;
+        justify-content: center; /* centers the search form horizontally */
+        margin-bottom: 1rem; /* space below the search form */
+    }
+
+    .button {
+        margin-left: 10px; /* space between the input and the button */
+        background-color: #4a47a3; /* matching theme color */
+        color: white; /* text color */
+        padding: 12px 24px; /* larger button for easier clicking */
+        font-size: 16px; /* larger text */
+        border-radius: 6px; /* rounded corners for the button */
+        cursor: pointer; /* cursor changes to pointer to indicate it's clickable */
+        border: none; /* no border */
+    }
+
+    .button:hover {
+        background-color: #6862a5; /* darker color on hover for interaction feedback */
+    }
+
+    #loading-indicator {
+        display: none; /* initially hidden */
+        color: #6a4f9e; /* theme color */
+        font-weight: bold; /* makes text bold */
+    }
+</style>
+{% endblock %}
+
 {% block title %}Positions List{% endblock %}
 
 {% block header %}Supported Positions{% endblock %}
 
 {% block content %}
+<form hx-get="/search_positions" hx-target="#positions-content" hx-trigger="keyup delay:500ms from:#search-input" hx-indicator="#loading-indicator">
+    <input type="text" id="search-input" name="search" placeholder="Search positions..." autocomplete="off">
+    <span id="loading-indicator" style="display:none;">Loading...</span>
+</form>
 <div id="positions-content">
     <table>
         <thead>
