@@ -109,7 +109,7 @@ CONTACT_EMAIL="Your email"
 LICENSE_NAME="The license you picked"
 ```
 
-For the database ([`if you don't have a database yet, click here`](#422-running-postgresql-with-docker)), create:
+For the database, create:
 
 ```
 # ------------- database -------------
