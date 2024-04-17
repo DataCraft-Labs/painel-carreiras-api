@@ -13,6 +13,7 @@
     .visualization-container {
         background: #ffffff; /* Ensures visual consistency */
         text-align: center; /* Centers the text horizontally */
+        padding: 20px;
     }
     .no-data {
         margin: 0; /* Removes any default margin */
@@ -41,10 +42,12 @@
     .button:hover {
         background-color: #6862a5;
     }
+    canvas {
+        width: 100%;
+        height: 400px;
+    }
 </style>
 {% endblock %}
-
-{% block title %}Search Salaries{% endblock %}
 
 {% block content %}
 <div class="search-and-filters-container">
@@ -58,11 +61,85 @@
         <select class="filter-select" name="company" id="company-select" hx-get="/dropdown_data" hx-target="#company-select" hx-swap="innerHTML" hx-trigger="load">
             <option value="">Select a company...</option>
         </select>
-        <button class="button">Search</button>
+        <button class="button" id="search-btn">Search</button>
     </div>
 </div>
 <div class="visualization-container">
-    <!-- This is where the charts will go -->
-    <p class="no-data">No data loaded yet.</p>
+    <canvas id="salaryChart" style="display:none;"></canvas>
+    <p id="no-data-message" class="no-data">No data loaded yet.</p>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.getElementById('search-btn').addEventListener('click', function() {
+    const position = document.getElementById('position-select').value;
+    const location = document.getElementById('location-select').value;
+    const company = document.getElementById('company-select').value;
+
+    fetch(`/salary_distribution?position=${encodeURIComponent(position)}&location=${encodeURIComponent(location)}&company=${encodeURIComponent(company)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.salaries.length > 0) {
+                document.getElementById('no-data-message').style.display = 'none';
+                document.getElementById('salaryChart').style.display = 'block';
+                const ctx = document.getElementById('salaryChart').getContext('2d');
+                const labels = data.salaries.map(d => d.salary);
+                const counts = data.salaries.map(d => d.count);
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.salaries.map(d => `$${d.salary}`), // Use salary as the label for each bar
+                        datasets: [{
+                            label: 'Number of Postings',
+                            data: data.salaries.map(d => d.count), // Count as the data for each bar
+                            backgroundColor: 'rgba(106, 79, 158, 0.2)',
+                            borderColor: 'rgba(106, 79, 158, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Count'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Salary'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    color: 'rgb(106, 79, 158)'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Display Statistics
+                document.getElementById('mean').textContent = `Mean: ${data.statistics.mean}`;
+                document.getElementById('median').textContent = `Median: ${data.statistics.median}`;
+                document.getElementById('std-deviation').textContent = `Standard Deviation: ${data.statistics.std_deviation}`;
+            } else {
+                document.getElementById('salaryChart').style.display = 'none';
+                document.getElementById('no-data-message').style.display = 'block';
+                document.getElementById('no-data-message').textContent = 'No data found for the selected criteria.';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading the data:', error);
+            document.getElementById('no-data-message').textContent = 'Error loading data. Please try again.';
+        });
+});
+</script>
 {% endblock %}
