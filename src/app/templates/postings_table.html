@@ -22,17 +22,4 @@
         {% endfor %}
     </tbody>
 </table>
-<div class="pagination-controls">
-    <form hx-get="/positions" hx-target="#positions-content">
-        <button type="submit" name="page" value="{{ current_page - 1 }}"
-                {% if current_page <= 1 %}disabled{% endif %}>Previous</button>
-        <span>Page {{ current_page }} of {{ total_pages }}</span>
-        <button type="submit" name="page" value="{{ current_page + 1 }}"
-                {% if current_page >= total_pages %}disabled{% endif %}>Next</button>
-        <select name="rows-per-page-select" onchange="this.form.submit()">
-            <option value="10" {% if rows_per_page == 10 %}selected{% endif %}>10</option>
-            <option value="20" {% if rows_per_page == 20 %}selected{% endif %}>20</option>
-            <option value="50" {% if rows_per_page == 50 %}selected{% endif %}>50</option>
-        </select>
-    </form>
-</div>
+{% include 'pagination_controls.html' %}
