@@ -6,4 +6,4 @@ router = APIRouter(tags=["client_login"])
 
 @router.get("/login")
 async def admin_login_page(request: Request):
-    return templates.TemplateResponse("login_page.html", {"request": request})
+    return templates.TemplateResponse("auth/login_page.html", {"request": request})

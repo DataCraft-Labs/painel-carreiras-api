@@ -25,9 +25,9 @@ async def get_positions(request: Request, db: Annotated[AsyncSession, Depends(as
     total_pages = ceil(positions["total_count"] / limit)
 
 
-    template = "positions.html"
+    template = "positions/positions.html"
     if "HX-Request" in request.headers:
-        template = "positions_table.html"
+        template = "positions/positions_table.html"
     
     return templates.TemplateResponse(
             template,
@@ -63,7 +63,7 @@ async def search_positions(request: Request, db: Annotated[AsyncSession, Depends
     total_pages = ceil(total_count / limit)
 
     return templates.TemplateResponse(
-        "positions_table.html", 
+        "positions/positions_table.html", 
         {
             "request": request,
             "positions": positions,

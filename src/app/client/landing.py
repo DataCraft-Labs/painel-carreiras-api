@@ -8,7 +8,7 @@ router = APIRouter(tags=["client_landing"])
 @router.get("/", response_class=HTMLResponse)
 async def get_landing(request: Request):
     return templates.TemplateResponse(
-            "landing.html",
+            "landing/landing.html",
             {
                 "request": request,
             },

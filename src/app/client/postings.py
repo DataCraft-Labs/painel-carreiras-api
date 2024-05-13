@@ -23,7 +23,7 @@ async def get_postings(request: Request, db: Annotated[AsyncSession, Depends(asy
     postings = await crud.get_multi(db=db, offset=offset, limit=limit)
     total_pages = ceil(postings["total_count"] / limit)
 
-    template = "postings.html"
+    template = "postings/postings.html"
     if "HX-Request" in request.headers:
         template = "postings_table.html"
     
@@ -61,7 +61,7 @@ async def search_postings(request: Request, db: Annotated[AsyncSession, Depends(
     total_pages = ceil(total_count / limit)
 
     return templates.TemplateResponse(
-        "postings_table.html", 
+        "postings/postings_table.html", 
         {
             "request": request,
             "postings": postings,

@@ -45,41 +45,34 @@
 </style>
 {% endblock %}
 
+{% block title %}Positions List{% endblock %}
 
-{% block title %}Job Postings{% endblock %}
-
-{% block header %}Job Postings{% endblock %}
+{% block header %}Supported Positions{% endblock %}
 
 {% block content %}
-<form hx-get="/search_postings" hx-target="#postings-content" hx-trigger="keyup delay:500ms from:#search-input" hx-indicator="#loading-indicator">
-    <input type="text" id="search-input" name="search" placeholder="Search postings..." autocomplete="off">
+<form hx-get="/search_positions" hx-target="#positions-content" hx-trigger="keyup delay:500ms from:#search-input" hx-indicator="#loading-indicator">
+    <input type="text" id="search-input" name="search" placeholder="Search positions..." autocomplete="off">
     <span id="loading-indicator" style="display:none;">Loading...</span>
 </form>
-<div id="postings-content">
+<div id="positions-content">
     <table>
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Title</th>
-                <th>Company</th>
-                <th>Location</th>
                 <th>Description</th>
-                <th>Seniority</th>
             </tr>
         </thead>
         <tbody>
-            {% for posting in postings %}
+            {% for position in positions %}
             <tr>
-                <td>{{ posting.id }}</td>
-                <td>{{ posting.original_title }}</td>
-                <td>{{ posting.company }}</td>
-                <td>{{ posting.location }}</td>
-                <td>{{ posting.description }}</td>
-                <td>{{ posting.seniority }}</td>
+                <td>{{ position.id }}</td>
+                <td>{{ position.title }}</td>
+                <td>{{ position.description }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    {% include 'pagination_controls.html' %}
+    {% include 'utils/pagination_controls.html' %}
 </div>
 {% endblock %}
