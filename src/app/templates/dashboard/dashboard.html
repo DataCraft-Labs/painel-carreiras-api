@@ -1,145 +1,365 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Painel de Carreiras{% endblock %}</title>
+    <script src="https://unpkg.com/htmx.org"></script>
+    {% block additional_css %}{% endblock %}
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f3f0f7;
+            color: #333;
+            line-height: 1.6;
+        }
+        header {
+            background-color: #6a4f9e;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+        }
+        header img {
+            margin-right: 20px;
+            height: 50px;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+        .nav-link, .login-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            margin-left: 20px;
+        }
+        .login-link {
+            background-color: #7a5c99;
+            border-radius: 4px;
+        }
+        .nav-link:hover, .login-link:hover {
+            text-decoration: underline;
+            background-color: #9c77cc;
+        }
+        main {
+            width: 85%;
+            max-width: 1200px;
+            margin: 30px auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 15px rgba(106, 79, 158, 0.2);
+            border-radius: 8px;
+        }
+        footer .bottom-bar {
+            text-align: center;
+            padding: 20px;
+            background-color: #6a4f9e;
+            color: white;
+        }
+        .statistics-container, .visualization-container, .skills-container {
+            background: #ffffff;
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        .statistics-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        .statistics {
+            flex: 1;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #e6d8f3;
+            border-radius: 8px;
+        }
+        .no-data {
+            margin: 0;
+            padding: 20px;
+            color: #666;
+        }
+        .search-and-filters-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .filter-group {
+            display: flex;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .filter-select {
+            flex: 1;
+            padding: 10px;
+            margin: 5px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+        }
+        .button {
+            padding: 10px 20px;
+            background-color: #4a47a3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #6862a5;
+        }
+        canvas {
+            width: 100%;
+            height: 400px;
+        }
+        .dashboard-title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #6a4f9e;
+        }
+        .sub-title {
+            text-align: center;
+            font-size: 1.0rem;
+            margin-bottom: 20px;
+            color: #6a4f9e;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="/"><img src="https://raw.githubusercontent.com/DataCraft-Labs/static/main/datacraft_labs.png" alt="Company Logo"></a>
+            <h1>{% block header %}Painel de Carreiras{% endblock %}</h1>
+        </div>
+        <div class="nav-links">
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+            <a href="/postings" class="nav-link">Postings</a>
+            <a href="/positions" class="nav-link">Positions</a>
+            <a href="/login" class="login-link">Login</a>
+        </div>
+    </header>
+    <main>
+        {% block content %}
+        <h2 id="dashboard-title" class="dashboard-title">Dashboard</h2>
+        <div class="search-and-filters-container">
+            <div class="filter-group">
+                <select class="filter-select" name="position" id="position-select" hx-get="/dropdown_data" hx-target="#position-select" hx-swap="innerHTML" hx-trigger="load">
+                    <option value="">Select a position...</option>
+                </select>
+                <select class="filter-select" name="location" id="location-select" hx-get="/dropdown_data" hx-target="#location-select" hx-swap="innerHTML" hx-trigger="load">
+                    <option value="">Select a location...</option>
+                </select>
+                <select class="filter-select" name="company" id="company-select" hx-get="/dropdown_data" hx-target="#company-select" hx-swap="innerHTML" hx-trigger="load">
+                    <option value="">Select a company...</option>
+                </select>
+                <button class="button" id="search-btn">Search</button>
+            </div>
+        </div>
+        <div class="statistics-container" id="statistics-container" style="display:none;">
+            <div class="statistics" id="mean">Mean: </div>
+            <div class="statistics" id="median">Median: </div>
+            <div class="statistics" id="total-count">Total Count: </div>
+        </div>
+        <div class="visualization-container">
+            <h3 class="sub-title">Distribution</h3>
+            <canvas id="salaryChart" style="display:none;"></canvas>
+            <p id="no-data-message" class="no-data">No data loaded yet.</p>
+        </div>
+        <div class="skills-container">
+            <h3 class="sub-title">Top Skills</h3>
+            <canvas id="skillsChart" style="display:none;"></canvas>
+            <p id="no-skills-message" class="no-data">No skills data loaded yet.</p>
+        </div>
+        {% endblock %}
+    </main>
+    <footer>
+        <div class="bottom-bar">
+            <p>© 2024 DataCraft Labs. All rights reserved.</p>
+        </div>
+    </footer>
 
-{% block additional_css %}
-<style>
-    .search-and-filters-container, .visualization-container {
-        max-width: 960px;
-        margin: 2rem auto;
-        padding: 1rem;
-        background: #f8f9fa;
-        border-radius: 8px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    .visualization-container {
-        background: #ffffff; /* Ensures visual consistency */
-        text-align: center; /* Centers the text horizontally */
-        padding: 20px;
-    }
-    .no-data {
-        margin: 0; /* Removes any default margin */
-        padding: 20px;
-        color: #666; /* Optional: styles the color of the text */
-    }
-    .filter-group {
-        display: flex;
-        margin-bottom: 1rem;
-    }
-    .filter-select {
-        flex: 1;
-        padding: 10px;
-        margin-right: 10px;
-        border: 2px solid #ccc;
-        border-radius: 4px;
-    }
-    .button {
-        padding: 10px 20px;
-        background-color: #4a47a3;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    .button:hover {
-        background-color: #6862a5;
-    }
-    canvas {
-        width: 100%;
-        height: 400px;
-    }
-</style>
-{% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    let salaryChart;
+    let skillsChart;
 
-{% block content %}
-<div class="search-and-filters-container">
-    <div class="filter-group">
-        <select class="filter-select" name="position" id="position-select" hx-get="/dropdown_data" hx-target="#position-select" hx-swap="innerHTML" hx-trigger="load">
-            <option value="">Select a position...</option>
-        </select>
-        <select class="filter-select" name="location" id="location-select" hx-get="/dropdown_data" hx-target="#location-select" hx-swap="innerHTML" hx-trigger="load">
-            <option value="">Select a location...</option>
-        </select>
-        <select class="filter-select" name="company" id="company-select" hx-get="/dropdown_data" hx-target="#company-select" hx-swap="innerHTML" hx-trigger="load">
-            <option value="">Select a company...</option>
-        </select>
-        <button class="button" id="search-btn">Search</button>
-    </div>
-</div>
-<div class="visualization-container">
-    <canvas id="salaryChart" style="display:none;"></canvas>
-    <p id="no-data-message" class="no-data">No data loaded yet.</p>
-</div>
+    document.getElementById('search-btn').addEventListener('click', function() {
+        const position = document.getElementById('position-select').value;
+        const location = document.getElementById('location-select').value;
+        const company = document.getElementById('company-select').value;
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-document.getElementById('search-btn').addEventListener('click', function() {
-    const position = document.getElementById('position-select').value;
-    const location = document.getElementById('location-select').value;
-    const company = document.getElementById('company-select').value;
+        if (!position && !location && !company) {
+            alert("Please select at least one filter.");
+            return;
+        }
 
-    fetch(`/salary_distribution?position=${encodeURIComponent(position)}&location=${encodeURIComponent(location)}&company=${encodeURIComponent(company)}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.salaries.length > 0) {
-                document.getElementById('no-data-message').style.display = 'none';
-                document.getElementById('salaryChart').style.display = 'block';
-                const ctx = document.getElementById('salaryChart').getContext('2d');
-                const labels = data.salaries.map(d => d.salary);
-                const counts = data.salaries.map(d => d.count);
+        fetch(`/salary_distribution?position=${encodeURIComponent(position)}&location=${encodeURIComponent(location)}&company=${encodeURIComponent(company)}`)
+            .then(response => response.json())
+            .then(data => {
+                const dashboardTitle = document.getElementById('dashboard-title');
+                dashboardTitle.textContent = position ? `Dashboard for ${position}` : 'Dashboard';
 
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: data.salaries.map(d => `$${d.salary}`), // Use salary as the label for each bar
-                        datasets: [{
-                            label: 'Number of Postings',
-                            data: data.salaries.map(d => d.count), // Count as the data for each bar
-                            backgroundColor: 'rgba(106, 79, 158, 0.2)',
-                            borderColor: 'rgba(106, 79, 158, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Count'
+                if (data.salaries.length > 0) {
+                    document.getElementById('no-data-message').style.display = 'none';
+                    document.getElementById('salaryChart').style.display = 'block';
+                    document.getElementById('statistics-container').style.display = 'flex';
+
+                    const ctx = document.getElementById('salaryChart').getContext('2d');
+
+                    if (salaryChart) {
+                        salaryChart.destroy();
+                    }
+
+                    salaryChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.salaries.map(d => `${d.salary}`),
+                            datasets: [{
+                                label: 'Number of Postings',
+                                data: data.salaries.map(d => d.count),
+                                backgroundColor: 'rgba(106, 79, 158, 0.2)',
+                                borderColor: 'rgba(106, 79, 158, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Count'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Salary'
+                                    }
                                 }
                             },
-                            x: {
-                                title: {
+                            plugins: {
+                                legend: {
                                     display: true,
-                                    text: 'Salary'
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top',
-                                labels: {
-                                    color: 'rgb(106, 79, 158)'
+                                    position: 'top',
+                                    labels: {
+                                        color: 'rgb(106, 79, 158)'
+                                    }
                                 }
                             }
                         }
-                    }
-                });
+                    });
 
-                // Display Statistics
-                document.getElementById('mean').textContent = `Mean: ${data.statistics.mean}`;
-                document.getElementById('median').textContent = `Median: ${data.statistics.median}`;
-                document.getElementById('std-deviation').textContent = `Standard Deviation: ${data.statistics.std_deviation}`;
-            } else {
+                    document.getElementById('mean').textContent = `Mean: ${data.statistics.mean}`;
+                    document.getElementById('median').textContent = `Median: ${data.statistics.median}`;
+                    document.getElementById('total-count').textContent = `Total Count: ${data.salaries.reduce((acc, cur) => acc + cur.count, 0)}`;
+                } else {
+                    document.getElementById('salaryChart').style.display = 'none';
+                    document.getElementById('statistics-container').style.display = 'none';
+                    document.getElementById('no-data-message').style.display = 'block';
+                    document.getElementById('no-data-message').textContent = 'No data found for the selected criteria.';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading the data:', error);
                 document.getElementById('salaryChart').style.display = 'none';
+                document.getElementById('statistics-container').style.display = 'none';
                 document.getElementById('no-data-message').style.display = 'block';
-                document.getElementById('no-data-message').textContent = 'No data found for the selected criteria.';
-            }
-        })
-        .catch(error => {
-            console.error('Error loading the data:', error);
-            document.getElementById('no-data-message').textContent = 'Error loading data. Please try again.';
-        });
-});
-</script>
-{% endblock %}
+                document.getElementById('no-data-message').textContent = 'Error loading data. Please try again.';
+            });
+
+            fetch(`/top_used_skills?position=${encodeURIComponent(position)}&location=${encodeURIComponent(location)}&company=${encodeURIComponent(company)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.skills.length > 0) {
+                    document.getElementById('no-skills-message').style.display = 'none';
+                    document.getElementById('skillsChart').style.display = 'block';
+
+                    const ctx = document.getElementById('skillsChart').getContext('2d');
+
+                    if (skillsChart) {
+                        skillsChart.destroy();
+                    }
+
+                    skillsChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.skills.map(d => d.name),
+                            datasets: [{
+                                label: 'Percentage',
+                                data: data.skills.map(d => d.percentage),
+                                backgroundColor: 'rgba(106, 79, 158, 0.2)',
+                                borderColor: 'rgba(106, 79, 158, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            indexAxis: 'y',
+                            scales: {
+                                x: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Percentage'
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Skill'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top',
+                                    labels: {
+                                        color: 'rgb(106, 79, 158)'
+                                    }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            let label = context.dataset.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            if (context.parsed.x !== null) {
+                                                label += context.parsed.x.toFixed(2) + '%';
+                                            }
+                                            return label;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    document.getElementById('skillsChart').style.display = 'none';
+                    document.getElementById('no-skills-message').style.display = 'block';
+                    document.getElementById('no-skills-message').textContent = 'No skills data found for the selected criteria.';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading the data:', error);
+                document.getElementById('skillsChart').style.display = 'none';
+                document.getElementById('no-skills-message').style.display = 'block';
+                document.getElementById('no-skills-message').textContent = 'Error loading skills data. Please try again.';
+            });
+    });
+    </script>
+</body>
+</html>

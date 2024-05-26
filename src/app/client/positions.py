@@ -56,7 +56,7 @@ async def search_positions(request: Request, db: Annotated[AsyncSession, Depends
 
     total_count_query = select(func.count()).select_from(Position)
     if search:
-        total_count_query = total_count_query.where(Position.title.ilike(f"%{search}%"))  # Updated to use ilike
+        total_count_query = total_count_query.where(Position.title.ilike(f"%{search}%"))
     total_count_result = await db.execute(total_count_query)
     total_count = total_count_result.scalar_one()
 

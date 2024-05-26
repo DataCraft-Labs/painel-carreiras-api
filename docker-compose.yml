@@ -122,6 +122,20 @@ services:
   #   volumes:
   #     - ./src:/code/src
 
+  #-------- uncomment to create sample data --------
+  # create_sample_data:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   env_file:
+  #     - ./src/.env
+  #   depends_on:
+  #     - db
+  #     - web
+  #   command: python -m src.scripts.create_sample_data
+  #   volumes:
+  #     - ./src:/code/src
+
 volumes:
   postgres-data:
   redis-data:

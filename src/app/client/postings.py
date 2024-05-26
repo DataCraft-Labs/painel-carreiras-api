@@ -25,7 +25,7 @@ async def get_postings(request: Request, db: Annotated[AsyncSession, Depends(asy
 
     template = "postings/postings.html"
     if "HX-Request" in request.headers:
-        template = "postings_table.html"
+        template = "postings/postings_table.html"
     
     return templates.TemplateResponse(
             template,
