@@ -12,6 +12,7 @@ from .job_skill import router as job_skill_router
 from .benefit import router as benefits_router
 from .bonus import router as bonus_router
 from .equity import router as equity_router
+from .scraper import router as scraper_router
 
 
 router = APIRouter(prefix="/v1")
@@ -27,3 +28,4 @@ router.include_router(job_skill_router)
 router.include_router(benefits_router)
 router.include_router(bonus_router)
 router.include_router(equity_router)
+router.include_router(scraper_router)

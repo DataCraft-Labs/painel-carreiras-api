@@ -3,6 +3,7 @@ from typing import Annotated, Optional
 
 from pydantic import BaseModel, Field
 
+
 class SkillBase(BaseModel):
     name: Annotated[str, Field(min_length=1, max_length=100, strip_whitespace=True, description="Name of the skill")]
 

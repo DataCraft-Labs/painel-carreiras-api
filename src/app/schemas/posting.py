@@ -3,9 +3,12 @@ from typing import Annotated, Optional
 
 from pydantic import BaseModel, Field
 
+
 class PostingBase(BaseModel):
     position_id: Annotated[int, Field(ge=1, description="Foreign key to the position table")]
-    original_title: Annotated[str, Field(max_length=100, description="The title of the job posting as originally listed")]
+    original_title: Annotated[
+        str, Field(max_length=100, description="The title of the job posting as originally listed")
+    ]
     location: Annotated[str, Field(max_length=100, description="Location where the job is based")]
     company: Annotated[str, Field(max_length=100, description="Company offering the position")]
     seniority: Annotated[str, Field(max_length=50, description="Seniority level required for the position")]

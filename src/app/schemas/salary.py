@@ -4,12 +4,31 @@ from decimal import Decimal
 
 from pydantic import BaseModel, Field
 
+
 class SalaryBase(BaseModel):
     posting_id: Annotated[int, Field(ge=1, description="Foreign key to the posting table")]
-    base_salary: Annotated[Decimal, Field(ge=0, decimal_places=2, description="The base annual salary for the position")]
-    median_salary: Optional[Annotated[Decimal, Field(ge=0, decimal_places=2, description="The median annual salary, accommodating variances such as experience level")]]
-    max_salary: Optional[Annotated[Decimal, Field(ge=0, decimal_places=2, description="Maximum potential salary based on performance and promotions")]]
-    currency: Annotated[str, Field(max_length=3, strict=True, description="Currency code in which the salary is paid", default='USD')]
+    base_salary: Annotated[
+        Decimal, Field(ge=0, decimal_places=2, description="The base annual salary for the position")
+    ]
+    median_salary: Optional[
+        Annotated[
+            Decimal,
+            Field(
+                ge=0,
+                decimal_places=2,
+                description="The median annual salary, accommodating variances such as experience level",
+            ),
+        ]
+    ]
+    max_salary: Optional[
+        Annotated[
+            Decimal,
+            Field(ge=0, decimal_places=2, description="Maximum potential salary based on performance and promotions"),
+        ]
+    ]
+    currency: Annotated[
+        str, Field(max_length=3, strict=True, description="Currency code in which the salary is paid", default="USD")
+    ]
 
 
 class SalaryCreate(SalaryBase):

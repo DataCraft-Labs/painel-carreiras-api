@@ -1,6 +1,8 @@
 from datetime import datetime
 from typing import Annotated, Optional
+
 from pydantic import BaseModel, Field
+
 
 class BonusBase(BaseModel):
     type: Annotated[str, Field(max_length=50, description="Type of bonus, e.g., Annual, Performance")]
@@ -17,7 +19,7 @@ class BonusRead(BaseModel):
     type: Annotated[str, Field(max_length=50)]
     amount: Annotated[float, Field(ge=0)]
     created_at: datetime
-    updated_at: Optional[datetime]
+    updated_at: Optional[str]
 
 
 class BonusUpdate(BaseModel):

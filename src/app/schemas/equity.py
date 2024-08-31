@@ -3,6 +3,7 @@ from typing import Annotated, Optional
 
 from pydantic import BaseModel, Field
 
+
 class EquityBase(BaseModel):
     type: Annotated[str, Field(max_length=50, description="Type of equity, e.g., Stock Options, RSUs")]
     amount: Annotated[float, Field(ge=0, description="Amount of the equity")]
@@ -19,8 +20,8 @@ class EquityRead(BaseModel):
     type: Annotated[str, Field(max_length=50)]
     amount: Annotated[float, Field(ge=0)]
     vesting_period: Annotated[str, Field(max_length=50)]
-    created_at: datetime
-    updated_at: Optional[datetime]
+    created_at: str
+    updated_at: Optional[str]
 
 
 class EquityUpdate(BaseModel):

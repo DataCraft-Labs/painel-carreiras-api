@@ -26,10 +26,12 @@ async_engine = create_async_engine(DATABASE_URL, echo=False, future=True)
 
 local_session = sessionmaker(bind=async_engine, class_=AsyncSession, expire_on_commit=False)
 
+
 async def create_tables():
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     logger.info("All tables created successfully.")
+
 
 async def add_positions(session: AsyncSession):
     positions = [
@@ -49,23 +51,57 @@ async def add_positions(session: AsyncSession):
     await session.commit()
     logger.info("Positions added successfully.")
 
+
 async def add_postings(session: AsyncSession):
     result = await session.execute(select(Position.id))
     position_ids = [row[0] for row in result.fetchall()]
 
-    locations = ["San Francisco", "New York", "Chicago", "Austin", "Seattle", "Boston", "Los Angeles", "Denver", "Portland", "San Diego", "Miami"]
-    companies = ["TechCorp", "WebWorks", "Innovatech", "CodeBase", "TechWorld", "AppWorks", "FunTech", "CloudNine", "EmbedTech", "AIBrain", "BlockChainCo"]
+    locations = [
+        "San Francisco",
+        "New York",
+        "Chicago",
+        "Austin",
+        "Seattle",
+        "Boston",
+        "Los Angeles",
+        "Denver",
+        "Portland",
+        "San Diego",
+        "Miami",
+    ]
+    companies = [
+        "TechCorp",
+        "WebWorks",
+        "Innovatech",
+        "CodeBase",
+        "TechWorld",
+        "AppWorks",
+        "FunTech",
+        "CloudNine",
+        "EmbedTech",
+        "AIBrain",
+        "BlockChainCo",
+    ]
     seniorities = ["Junior", "Mid", "Senior"]
 
     postings = []
     for position_id in position_ids:
-        postings.extend([
-            Posting(position_id=position_id, original_title=f"{random.choice(companies)} {i+1}", location=random.choice(locations), company=random.choice(companies), seniority=random.choice(seniorities))
-            for i in range(10)
-        ])
+        postings.extend(
+            [
+                Posting(
+                    position_id=position_id,
+                    original_title=f"{random.choice(companies)} {i+1}",
+                    location=random.choice(locations),
+                    company=random.choice(companies),
+                    seniority=random.choice(seniorities),
+                )
+                for i in range(10)
+            ]
+        )
     session.add_all(postings)
     await session.commit()
     logger.info("Postings added successfully.")
+
 
 async def add_salaries(session: AsyncSession):
     result = await session.execute(select(Posting.id))
@@ -75,7 +111,13 @@ async def add_salaries(session: AsyncSession):
     base_salaries = [int(random.gauss(115000, 15000)) for _ in range(num_salaries * 3)]
 
     salaries = [
-        Salary(posting_id=posting_id, base_salary=Decimal(base_salaries.pop()), median_salary=Decimal(base_salaries.pop()), max_salary=Decimal(base_salaries.pop()), currency='USD')
+        Salary(
+            posting_id=posting_id,
+            base_salary=Decimal(base_salaries.pop()),
+            median_salary=Decimal(base_salaries.pop()),
+            max_salary=Decimal(base_salaries.pop()),
+            currency="USD",
+        )
         for posting_id in posting_ids
         for _ in range(10)
     ]
@@ -83,18 +125,44 @@ async def add_salaries(session: AsyncSession):
     await session.commit()
     logger.info("Salaries added successfully.")
 
+
 async def add_benefits(session: AsyncSession):
     result = await session.execute(select(Salary.id))
     salary_ids = [row[0] for row in result.fetchall()]
 
-    benefit_types = ["Health Insurance", "Retirement Plan", "Paid Time Off", "Life Insurance", "Stock Options", "Dental Insurance", "Vision Insurance", "Flexible Hours", "Work from Home", "Gym Membership", "Commuter Benefits"]
+    benefit_types = [
+        "Health Insurance",
+        "Retirement Plan",
+        "Paid Time Off",
+        "Life Insurance",
+        "Stock Options",
+        "Dental Insurance",
+        "Vision Insurance",
+        "Flexible Hours",
+        "Work from Home",
+        "Gym Membership",
+        "Commuter Benefits",
+    ]
     descriptions = [
-        "Full health coverage.", "401k matching.", "20 days per year.", "Coverage for life insurance.", "Equity in the company.",
-        "Full dental coverage.", "Full vision coverage.", "Flexible working hours.", "Option to work remotely.", "Free gym membership.", "Subsidized commuting costs."
+        "Full health coverage.",
+        "401k matching.",
+        "20 days per year.",
+        "Coverage for life insurance.",
+        "Equity in the company.",
+        "Full dental coverage.",
+        "Full vision coverage.",
+        "Flexible working hours.",
+        "Option to work remotely.",
+        "Free gym membership.",
+        "Subsidized commuting costs.",
     ]
 
     benefits = [
-        Benefit(salary_id=salary_id, benefit_type=benefit_types[i % len(benefit_types)], description=descriptions[i % len(descriptions)])
+        Benefit(
+            salary_id=salary_id,
+            benefit_type=benefit_types[i % len(benefit_types)],
+            description=descriptions[i % len(descriptions)],
+        )
         for salary_id in salary_ids
         for i in range(10)
     ]
@@ -102,11 +170,24 @@ async def add_benefits(session: AsyncSession):
     await session.commit()
     logger.info("Benefits added successfully.")
 
+
 async def add_bonuses(session: AsyncSession):
     result = await session.execute(select(Salary.id))
     salary_ids = [row[0] for row in result.fetchall()]
 
-    bonus_types = ["Annual", "Performance", "Signing", "Referral", "Retention", "Holiday", "Project", "Profit Sharing", "Sales", "Commission", "Incentive"]
+    bonus_types = [
+        "Annual",
+        "Performance",
+        "Signing",
+        "Referral",
+        "Retention",
+        "Holiday",
+        "Project",
+        "Profit Sharing",
+        "Sales",
+        "Commission",
+        "Incentive",
+    ]
 
     bonuses = [
         Bonus(salary_id=salary_id, type=bonus_types[i % len(bonus_types)], amount=Decimal(random.randint(1000, 10000)))
@@ -117,15 +198,33 @@ async def add_bonuses(session: AsyncSession):
     await session.commit()
     logger.info("Bonuses added successfully.")
 
+
 async def add_equities(session: AsyncSession):
     result = await session.execute(select(Salary.id))
     salary_ids = [row[0] for row in result.fetchall()]
 
-    equity_types = ["Stock Options", "RSUs", "ESPP", "Performance Shares", "Stock Grants", "Phantom Shares", "SARs", "Warrants", "Convertible Notes", "Growth Shares", "Profit Interests"]
+    equity_types = [
+        "Stock Options",
+        "RSUs",
+        "ESPP",
+        "Performance Shares",
+        "Stock Grants",
+        "Phantom Shares",
+        "SARs",
+        "Warrants",
+        "Convertible Notes",
+        "Growth Shares",
+        "Profit Interests",
+    ]
     vesting_periods = ["2 years", "3 years", "4 years", "5 years", "6 years"]
 
     equities = [
-        Equity(salary_id=salary_id, type=equity_types[i % len(equity_types)], amount=Decimal(random.randint(5000, 20000)), vesting_period=random.choice(vesting_periods))
+        Equity(
+            salary_id=salary_id,
+            type=equity_types[i % len(equity_types)],
+            amount=Decimal(random.randint(5000, 20000)),
+            vesting_period=random.choice(vesting_periods),
+        )
         for salary_id in salary_ids
         for i in range(10)
     ]
@@ -133,16 +232,31 @@ async def add_equities(session: AsyncSession):
     await session.commit()
     logger.info("Equities added successfully.")
 
-async def add_skills(session: AsyncSession):
-    skill_names = ["Python", "Machine Learning", "Data Analysis", "Project Management", "DevOps", "Software Testing", "Product Management", "User Experience Design", "Systems Analysis", "Database Management", "Network Security", "Cybersecurity", "Cloud Computing", "Artificial Intelligence", "Blockchain Technology"]
 
-    skills = [
-        Skill(name=skill_names[i % len(skill_names)])
-        for i in range(15)
+async def add_skills(session: AsyncSession):
+    skill_names = [
+        "Python",
+        "Machine Learning",
+        "Data Analysis",
+        "Project Management",
+        "DevOps",
+        "Software Testing",
+        "Product Management",
+        "User Experience Design",
+        "Systems Analysis",
+        "Database Management",
+        "Network Security",
+        "Cybersecurity",
+        "Cloud Computing",
+        "Artificial Intelligence",
+        "Blockchain Technology",
     ]
+
+    skills = [Skill(name=skill_names[i % len(skill_names)]) for i in range(15)]
     session.add_all(skills)
     await session.commit()
     logger.info("Skills added successfully.")
+
 
 async def add_job_skills(session: AsyncSession):
     result_posting = await session.execute(select(Posting.id))
@@ -165,6 +279,7 @@ async def add_job_skills(session: AsyncSession):
     await session.commit()
     logger.info("Job skills added successfully.")
 
+
 async def main():
     async with local_session() as session:
         await create_tables()
@@ -176,6 +291,7 @@ async def main():
         await add_equities(session)
         await add_skills(session)
         await add_job_skills(session)
+
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()

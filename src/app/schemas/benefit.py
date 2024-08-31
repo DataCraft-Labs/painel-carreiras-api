@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Annotated, Optional
 from pydantic import BaseModel, Field
 
+
 class BenefitsBase(BaseModel):
     benefit_type: Annotated[str, Field(max_length=100)]
     description: Optional[Annotated[str, Field(max_length=500)]]
@@ -16,8 +17,8 @@ class BenefitsRead(BaseModel):
     salary_id: Annotated[int, Field(ge=1)]
     benefit_type: Annotated[str, Field(max_length=100)]
     description: Optional[Annotated[str, Field(max_length=500)]]
-    created_at: datetime
-    updated_at: Optional[datetime]
+    created_at: str
+    updated_at: Optional[str]
 
 
 class BenefitsUpdate(BaseModel):

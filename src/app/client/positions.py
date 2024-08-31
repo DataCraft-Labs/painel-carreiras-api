@@ -14,6 +14,7 @@ from ..core.db.database import async_get_db
 router = APIRouter(tags=["client_positions"])
 crud = FastCRUD(Position)
 
+
 @router.get("/positions", response_class=HTMLResponse)
 async def get_positions(request: Request, db: Annotated[AsyncSession, Depends(async_get_db)]):
     page = int(request.query_params.get("page", 1))
@@ -21,29 +22,30 @@ async def get_positions(request: Request, db: Annotated[AsyncSession, Depends(as
     offset = (page - 1) * limit
 
     positions = await crud.get_multi(db=db, offset=offset, limit=limit)
-    
-    total_pages = ceil(positions["total_count"] / limit)
 
+    total_pages = ceil(positions["total_count"] / limit)
 
     template = "positions/positions.html"
     if "HX-Request" in request.headers:
         template = "positions/positions_table.html"
-    
+
     return templates.TemplateResponse(
-            template,
-            {
-                "request": request,
-                "positions": positions["data"],
-                "total_items": positions["total_count"],
-                "current_page": page,
-                "total_pages": total_pages,
-                "rows_per_page": limit
-            },
-        )
+        template,
+        {
+            "request": request,
+            "positions": positions["data"],
+            "total_items": positions["total_count"],
+            "current_page": page,
+            "total_pages": total_pages,
+            "rows_per_page": limit,
+        },
+    )
 
 
 @router.get("/search_positions", response_class=HTMLResponse)
-async def search_positions(request: Request, db: Annotated[AsyncSession, Depends(async_get_db)], search: str = "", page: int = 1):
+async def search_positions(
+    request: Request, db: Annotated[AsyncSession, Depends(async_get_db)], search: str = "", page: int = 1
+):
     limit = int(request.query_params.get("rows-per-page-select", 10))
     offset = (page - 1) * limit
 
@@ -63,13 +65,13 @@ async def search_positions(request: Request, db: Annotated[AsyncSession, Depends
     total_pages = ceil(total_count / limit)
 
     return templates.TemplateResponse(
-        "positions/positions_table.html", 
+        "positions/positions_table.html",
         {
             "request": request,
             "positions": positions,
             "total_items": total_count,
             "current_page": page,
             "total_pages": total_pages,
-            "rows_per_page": limit
-        }
+            "rows_per_page": limit,
+        },
     )

@@ -14,6 +14,7 @@ from ..core.db.database import async_get_db
 router = APIRouter(tags=["client_postings"])
 crud = FastCRUD(Posting)
 
+
 @router.get("/postings", response_class=HTMLResponse)
 async def get_postings(request: Request, db: Annotated[AsyncSession, Depends(async_get_db)]):
     page = int(request.query_params.get("page", 1))
@@ -26,22 +27,24 @@ async def get_postings(request: Request, db: Annotated[AsyncSession, Depends(asy
     template = "postings/postings.html"
     if "HX-Request" in request.headers:
         template = "postings/postings_table.html"
-    
+
     return templates.TemplateResponse(
-            template,
-            {
-                "request": request,
-                "postings": postings["data"],
-                "total_items": postings["total_count"],
-                "current_page": page,
-                "total_pages": total_pages,
-                "rows_per_page": limit
-            },
-        )
+        template,
+        {
+            "request": request,
+            "postings": postings["data"],
+            "total_items": postings["total_count"],
+            "current_page": page,
+            "total_pages": total_pages,
+            "rows_per_page": limit,
+        },
+    )
 
 
 @router.get("/search_postings", response_class=HTMLResponse)
-async def search_postings(request: Request, db: Annotated[AsyncSession, Depends(async_get_db)], search: str = "", page: int = 1):
+async def search_postings(
+    request: Request, db: Annotated[AsyncSession, Depends(async_get_db)], search: str = "", page: int = 1
+):
     limit = int(request.query_params.get("rows-per-page-select", 10))
     offset = (page - 1) * limit
 
@@ -61,13 +64,13 @@ async def search_postings(request: Request, db: Annotated[AsyncSession, Depends(
     total_pages = ceil(total_count / limit)
 
     return templates.TemplateResponse(
-        "postings/postings_table.html", 
+        "postings/postings_table.html",
         {
             "request": request,
             "postings": postings,
             "total_items": total_count,
             "current_page": page,
             "total_pages": total_pages,
-            "rows_per_page": limit
-        }
+            "rows_per_page": limit,
+        },
     )
